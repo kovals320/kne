@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { enabledModules, isExternal, type Module } from "@/core/modules";
 import { Icon } from "./Icon";
+import { UserMenu } from "./UserMenu";
 
 export const APP_NAME = "ניר אליהו";
 
@@ -33,6 +34,7 @@ export function Frame({ active, children }: { active?: string; children: React.R
             </span>
             <span className="text-2xl font-bold">{APP_NAME}</span>
           </Link>
+          <div className="flex items-center gap-2">
           {/* Desktop menu */}
           <nav aria-label="תפריט" className="hidden items-center gap-1 sm:flex">
             {modules.map((m) => (
@@ -50,6 +52,8 @@ export function Frame({ active, children }: { active?: string; children: React.R
               </ModuleLink>
             ))}
           </nav>
+          <UserMenu />
+          </div>
         </div>
       </header>
 

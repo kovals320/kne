@@ -50,7 +50,9 @@ src/
     ui/Frame.tsx            header + desktop menu + phone tab bar + home tiles
     ui/Icon.tsx             section icons
     ui/InstallPrompt.tsx    "install as an app" banner (Android button / iPhone instructions)
-    (step 3) supabase/, auth.ts, permissions
+    supabase/               client.ts (browser), server.ts, proxy.ts (keeps the session fresh; used by src/proxy.ts)
+    auth.ts                 getViewer() / requireMember() / requireAdmin(section) / requireSuper()
+    ui/UserMenu.tsx         sign-in button or the person's menu (checked in the browser), pending-count badge for app admins
   modules/<slug>/           a section's own code (data loading, components), so sections don't touch each other
 ```
 
@@ -67,6 +69,12 @@ App icon: a sun over fields on green (`public/icons/`, drawn from the same shape
 public pages should stay cacheable, so "who is signed in" is checked in the browser for the frame, and on the server only
 where it matters (admin pages, actions).
 
+**Users and permissions:** `kne_profiles` (status pending → approved / blocked) and `kne_roles` (section slug or `*`).
+Database functions for policies: `kne_is_approved()`, `kne_is_admin('<section>')` (true for that section's admins and
+for `*`), `kne_is_super()`. A blocked person loses admin rights automatically. App admins (`*`) approve people on
+`/admin/users`; a person can never block themselves or remove their own `*`. Make someone an app admin by SQL:
+`insert into kne_roles (user_id, section) select id, '*' from kne_profiles where email = '...';`
+
 ## 4. Accounts and where things live
 
 | Service | What | Notes |
@@ -82,10 +90,10 @@ where it matters (admin pages, actions).
 1. ✅ Repo `kovals320/kne` created empty; this file written.
 2. ✅ The frame: home with tiles, desktop menu, phone tab bar, design, installable app (manifest, icons, banner).
    Sections link to their old sites for now.
-3. Login and permissions: tables `kne_profiles` (each signed-in user: name, email, status pending/approved/blocked) and
+3. ✅ Login and permissions: tables `kne_profiles` (each signed-in user: name, email, status pending/approved/blocked) and
    `kne_roles` (who is admin of which section, plus a global admin), Google login in Supabase, an approval screen for
    admins, sign-in / sign-out in the frame.
-4. Vercel project + `app.kneapps.fyi` (Cloudflare CNAME), env vars, Supabase redirect URL.
+4. ✅ Vercel project + `app.kneapps.fyi` (Cloudflare CNAME), env vars, Supabase redirect URL.
 5. Move rain in as `/rain` (same tables), switch its tile to the internal path, then redirect `rain.kneapps.fyi`.
    Rain's admin rights move from `rain_members` to `kne_roles`.
 6. Move media in as `/media` (Immich + YouTube keys move to this Vercel project), then redirect `media.kneapps.fyi`.
@@ -94,8 +102,13 @@ where it matters (admin pages, actions).
 
 ## 6. Status
 
-**2026-10-31:** steps 1–2 done (frame only; no database, no login yet). Vercel project `kne` imported by Dor with the
-2 Supabase env vars; next: domain `app.kneapps.fyi`, then login (step 3).
+**2026-10-31:** steps 1–4 done. Vercel project `kne` (2 Supabase env vars), domain `app.kneapps.fyi`, Supabase redirect
+URL `https://app.kneapps.fyi/**`. Login: Google Cloud project `nir-eliyahu-app` (consent screen "ניר אליהו", published,
+external), OAuth web client with origin `https://app.kneapps.fyi` and redirect URI
+`https://pjujibzoscawmstarerz.supabase.co/auth/v1/callback`; Supabase Google provider enabled, sign-ups allowed.
+Code: `/login` (Google), `/auth/callback` (creates the `kne_profiles` row as pending on the first visit), `/pending`,
+`/admin/users` (app admins: approve / reject / block, admin rights per section). Next: Dor signs in, Claude makes him
+approved + `*` admin via SQL; then step 5 (rain).
 
 ## 7. Gotchas (shared with the other apps)
 
