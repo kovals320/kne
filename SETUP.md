@@ -97,7 +97,7 @@ for `*`), `kne_is_super()`. A blocked person loses admin rights automatically. A
 5. ✅ Move rain in as `/rain` (same tables), switch its tile to the internal path, then redirect `rain.kneapps.fyi`.
    Rain's admin rights move from `rain_members` to `kne_roles`.
 6. Move media in as `/media` (Immich + YouTube keys move to this Vercel project), then redirect `media.kneapps.fyi`.
-7. Rebuild sport as `/sport`: bookings tied to the logged-in member, new safe policies, then redirect
+7. ✅ (switch-over pending) Rebuild sport as `/sport`: bookings tied to the logged-in member, new safe policies, then redirect
    `sport.kneapps.fyi`. Existing bookings are kept.
 
 ## 6. Status
@@ -113,7 +113,14 @@ Rain moved in (2026-10-31): `src/modules/rain/` (data.ts = reads `rain_daily`, c
 Hero.tsx; ui.tsx = the section's title and tabs inside the frame) and pages under `src/app/(site)/rain/`
 (home, about, daily, monthly, admin). Rain admins = `kne_is_admin('rain')` (migration `rain_kne_admins` added a policy
 next to the old `rain_members` one, so the old site still works). Local test data: `RAIN_FIXTURE=…json`.
-Dor checked it; `rain.kneapps.fyi` now forwards to `app.kneapps.fyi/rain` (`next.config.ts` redirects in the rain repo, which only does that now). Next: step 7 (sport) before 6 (media).
+Dor checked it; `rain.kneapps.fyi` now forwards to `app.kneapps.fyi/rain` (`next.config.ts` redirects in the rain repo, which only does that now). 
+Sport rebuilt (2026-10-31) at `/sport` (`src/app/(site)/sport/`: page.tsx, SportApp.tsx = calendar + day list +
+booking form, actions.ts; `src/modules/sport/types.ts`). Same tables `sport_court_bookings` / `sport_booking_participants`,
+new columns `booker_id` / `user_id`. Anyone views; approved members book in their own name (name from their profile) and
+join / leave games; the booker or a sport admin edits, deletes and removes participants. Old bookings (no `booker_id`)
+can be changed only by sport admins. Database triggers block overlapping bookings and over-full games.
+Switch-over still to do after Dor checks: drop the two old public policies (SQL in `supabase/migrations/sport_kne.sql`),
+point the tile to `/sport`, forward `sport.kneapps.fyi`. Then step 6 (media).
 
 ## 7. Gotchas (shared with the other apps)
 
