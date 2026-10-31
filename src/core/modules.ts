@@ -24,7 +24,7 @@ export const MODULES: Module[] = [
     name: "משקעים",
     shortName: "גשם",
     description: "כמה גשם ירד, העונה ולאורך השנים",
-    href: "https://rain.kneapps.fyi",
+    href: "/rain",
     icon: "rain",
     accent: "#1d4fc4",
     tint: "#e6eefc",

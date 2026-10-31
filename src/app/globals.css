@@ -11,6 +11,14 @@
   --color-brand: #2f5f3a;
   --color-brand-deep: #244a2d;
 
+  /* Rain section (moved from rain.kneapps.fyi) */
+  --color-sky: #eef6fb;
+  --color-aqua: #e3f7f6;
+  --color-rain: #2563eb;
+  --color-rain-deep: #1d4fc4;
+  --color-teal: #0b7a74;
+  --color-drop: #7cc3e0;
+
   --font-sans: var(--font-rubik), "Rubik", system-ui, sans-serif;
 }
 
