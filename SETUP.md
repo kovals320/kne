@@ -104,7 +104,8 @@ for `*`), `kne_is_super()`. A blocked person loses admin rights automatically. A
 4. ✅ Vercel project + `app.kneapps.fyi` (Cloudflare CNAME), env vars, Supabase redirect URL.
 5. ✅ Move rain in as `/rain` (same tables), switch its tile to the internal path, then redirect `rain.kneapps.fyi`.
    Rain's admin rights move from `rain_members` to `kne_roles`.
-6. Move media in as `/media` (Immich + YouTube keys move to this Vercel project), then redirect `media.kneapps.fyi`.
+6. ⏳ Move media in as `/media` (Immich + YouTube keys move to this Vercel project), then redirect `media.kneapps.fyi`.
+   Code is in (2026-10-31); waiting for the three env vars, Dor's check, then the switch-over.
 7. ✅ Rebuild sport as `/sport`: bookings tied to the logged-in member, new safe policies, then redirect
    `sport.kneapps.fyi`. Existing bookings are kept.
 
@@ -128,7 +129,20 @@ new columns `booker_id` / `user_id`. Anyone views; approved members book in thei
 join / leave games; the booker or a sport admin edits, deletes and removes participants. Old bookings (no `booker_id`)
 can be changed only by sport admins. Database triggers block overlapping bookings and over-full games.
 Switched over after Dor's check: old public read/write policies dropped (migration `sport_close_public_write`), tile
-points to `/sport`, `sport.kneapps.fyi` forwards here (`vercel.json` in the sport repo). Next: step 6 (media).
+points to `/sport`, `sport.kneapps.fyi` forwards here (`vercel.json` in the sport repo).
+Media moved in (2026-10-31, code only): pages under `src/app/(site)/media/` (home with the photos/videos tiles,
+photos by year, people, videos, admin), helpers in `src/modules/media/` (immich.ts, youtube.ts, settings.ts, sort.ts,
+search.ts, useOverlay.ts, BackLink, AdminLink = "ניהול" checked in the browser), image proxies `/api/media/photo/…`
+and `/api/media/person/…` (keep the Immich key on the server; excluded from the session proxy), `/api/media/health`.
+Same tables `kmedia_playlists` / `kmedia_video_titles` / `kmedia_settings` and cache tags (`youtube`, `immich`,
+`kmedia-settings`, `kmedia-videos-db`). Media admins = `kne_is_admin('media')` (migration `kmedia_kne_admins`, next to
+the old `kmedia_is_admin()` policies; `kmedia_members` is no longer used by this app). Colours `sun`/`lake`/`print` and
+`font-display` (= Rubik bold) added to `globals.css`. Home card: a year's cover photo (changes daily) + photo count.
+**Needs on Vercel → kne → Settings → Environment Variables:** `YOUTUBE_API_KEY`, `IMMICH_URL`
+(`https://photos.kneapps.fyi`), `IMMICH_API_KEY` (same values as the kmedia project; keys as "Sensitive"), then a
+redeploy (photos pages are pre-built at deploy time, so the build must see the keys). Check: `/api/media/health`,
+`/media`. **Switch-over after Dor's check:** `href: "/media"` in `modules.ts`; `media.kneapps.fyi` forwards via
+redirects in the kmedia repo (needs push access to `kovals320/kmedia`), like rain.
 
 ## 7. Gotchas (shared with the other apps)
 

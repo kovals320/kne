@@ -19,7 +19,16 @@
   --color-teal: #0b7a74;
   --color-drop: #7cc3e0;
 
+  /* Media section (moved from media.kneapps.fyi): clay accent, field green, photo-print white */
+  --color-sun: #e08a54;
+  --color-sun-deep: #c56f3b;
+  --color-lake: #3f6b3a;
+  --color-lake-deep: #2f5430;
+  --color-print: #fffcf2;
+
   --font-sans: var(--font-rubik), "Rubik", system-ui, sans-serif;
+  /* Media titles: the app font, bold (the old media site used Secular One) */
+  --font-display: var(--font-rubik), "Rubik", system-ui, sans-serif;
 }
 
 html {
@@ -38,3 +47,26 @@ body {
   outline: 3px solid var(--color-brand);
   outline-offset: 3px;
 }
+
+.font-display {
+  font-weight: 700;
+}
+
+/* Media: photo prints fan out once on load */
+@keyframes fan-left {
+  from { transform: rotate(0deg) translateX(0); }
+  to   { transform: rotate(-9deg) translateX(14px); }
+}
+@keyframes fan-right {
+  from { transform: rotate(0deg) translateX(0); }
+  to   { transform: rotate(7deg) translateX(-12px); }
+}
+.print-left  { animation: fan-left 700ms cubic-bezier(.2,.8,.2,1) 150ms both; }
+.print-right { animation: fan-right 700ms cubic-bezier(.2,.8,.2,1) 250ms both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .print-left, .print-right { animation-duration: 1ms; animation-delay: 0ms; }
+}
+
+/* A phone turned sideways: media players drop their bars and fill the screen. */
+@custom-variant phone-landscape (@media (orientation: landscape) and (max-height: 540px));
