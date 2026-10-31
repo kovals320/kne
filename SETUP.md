@@ -99,7 +99,7 @@ where it matters (admin pages, actions).
 
 ## 7. Gotchas (shared with the other apps)
 
-- Supabase `home` prefixes in use: `home_`, `sport_`, `sec_`, `shirim3_`, `media_`, `kmedia_`, `rain_`, `kne_`.
+- Supabase `home` prefixes in use: `home_`, `sport_`, `sec_`, `shirim3_`, `media_`, `kmedia_`, `rain_`, `rnb_`, `kne_`.
 - **From 2026-10-30 Supabase no longer grants Data API access to new `public` tables automatically.** Every new table
   needs explicit grants in the same migration, or the app gets "permission denied":
   `grant select on public.X to anon; grant select, insert, update, delete on public.X to authenticated, service_role;`
