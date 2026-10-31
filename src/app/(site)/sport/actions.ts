@@ -1,5 +1,6 @@
 "use server";
 
+import { updateTag } from "next/cache";
 import { displayName, getViewer } from "@/core/auth";
 import { START_TIMES, type Court } from "@/modules/sport/types";
 
@@ -55,7 +56,9 @@ export async function saveBooking(input: {
     : await viewer.supabase
         .from("sport_court_bookings")
         .insert({ ...row, booker_id: viewer.user!.id, booker_name: displayName(viewer.profile!) });
-  return error ? { ok: false, message: friendly(error.message) } : { ok: true };
+  if (error) return { ok: false, message: friendly(error.message) };
+  updateTag("sport");
+  return { ok: true };
 }
 
 export async function deleteBooking(id: number): Promise<Result> {
@@ -63,7 +66,9 @@ export async function deleteBooking(id: number): Promise<Result> {
   if ("error" in m) return { ok: false, message: m.error! };
   const { error, count } = await m.viewer.supabase.from("sport_court_bookings").delete({ count: "exact" }).eq("id", id);
   if (error) return { ok: false, message: friendly(error.message) };
-  return count ? { ok: true } : { ok: false, message: "אפשר למחוק רק הזמנה שלך." };
+  if (!count) return { ok: false, message: "אפשר למחוק רק הזמנה שלך." };
+  updateTag("sport");
+  return { ok: true };
 }
 
 export async function joinBooking(bookingId: number): Promise<Result> {

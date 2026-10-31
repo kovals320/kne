@@ -56,6 +56,14 @@ src/
   modules/<slug>/           a section's own code (data loading, components), so sections don't touch each other
 ```
 
+**Home page = "what's new" (2026-10-31, Dor's request):** the phone tab bar already lists the sections, so the home
+page doesn't repeat them as plain tiles; it shows one card per section with a live summary
+(`src/modules/<slug>/Summary.tsx`, registered in `src/modules/summaries.tsx`; a section without one shows its
+description). Rain: last measurement + season vs average to date. Sport: today's bookings that haven't ended
+(cached 1 minute, tag `sport`, cleared by booking actions). Media: text (a photo of the day once media moves in).
+**Open design question:** the phone tab bar fits about 4–5 items. With more sections, rethink it (e.g. a "עוד" tab
+or only the most-used sections in the bar) — Dor wants to decide this together when it comes up.
+
 **Adding a section:** a folder `src/app/(site)/<slug>`, its code in `src/modules/<slug>`, one entry in
 `src/core/modules.ts`, and tables with a new prefix (plus explicit grants, see section 7). The home tile, the menus
 and the phone tab bar update themselves. While a section still lives in its old site, its entry's `href` is the old

@@ -6,7 +6,7 @@ const DAY_MS = 86_400_000;
 const utc = (d: string) => Date.UTC(Number(d.slice(0, 4)), Number(d.slice(5, 7)) - 1, Number(d.slice(8, 10)));
 const WEEKDAYS = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"];
 
-function whenText(date: string, today: string) {
+export function whenText(date: string, today: string) {
   const n = Math.round((utc(today) - utc(date)) / DAY_MS);
   if (n <= 0) return "היום";
   if (n === 1) return "אתמול";

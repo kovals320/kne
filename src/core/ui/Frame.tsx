@@ -113,3 +113,26 @@ export function Tile({ m }: { m: Module }) {
     </ModuleLink>
   );
 }
+
+// A home-page card: the section's name and icon on top, and its live summary below (or its description).
+// The whole card opens the section.
+export function SummaryCard({ m, children }: { m: Module; children?: React.ReactNode }) {
+  return (
+    <ModuleLink
+      m={m}
+      className="group flex flex-col rounded-3xl border border-line bg-card p-5 shadow-sm transition-transform active:scale-[0.99]"
+    >
+      <span className="flex items-center gap-3">
+        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl" style={{ backgroundColor: m.tint, color: m.accent }}>
+          <Icon name={m.icon} className="h-6 w-6" />
+        </span>
+        <span className="text-xl font-bold">{m.name}</span>
+        <span aria-hidden className="ms-auto text-2xl text-muted transition-transform group-hover:-translate-x-1">
+          ‹
+        </span>
+      </span>
+      <span className="mt-3 block">{children ?? <span className="text-muted">{m.description}</span>}</span>
+    </ModuleLink>
+  );
+}
+
