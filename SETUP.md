@@ -1,0 +1,120 @@
+# ניר אליהו – the kibbutz app (`app.kneapps.fyi`)
+
+A record of the project, so a new conversation (or a new person) can continue without the original chat.
+
+> **Starting a new conversation with this file:** read sections 8 (how Dor likes to work), 7 (gotchas), 2 (decisions)
+> and 6 (status). Code: public repo `kovals320/kne`. The older separate apps are `kovals320/rain`, `kovals320/kmedia`
+> and `kovals320/sport`; each has (or had) its own conversation and SETUP.md.
+
+## 1. What it is
+
+One app for Kibbutz Nir Eliyahu (Hebrew, right-to-left, mobile-first, installable on phones) that holds several
+**sections**. It starts with the three apps built earlier as separate sites, and new sections are added over time:
+
+| Section | Today | In this app |
+|---|---|---|
+| משקעים (rain) | `rain.kneapps.fyi`, repo `rain`, Next.js, tables `rain_` | `/rain` |
+| מדיה (media) | `media.kneapps.fyi`, repo `kmedia`, Next.js + Immich + YouTube, tables `kmedia_` | `/media` |
+| מגרשי ספורט (sport) | `sport.kneapps.fyi`, repo `sport`, one plain `index.html`, tables `sport_` | `/sport` (rewritten) |
+
+## 2. Decisions (2026-10-31, with Dor)
+
+- **One app with sections**, not a hub of links: one domain, one repo, one installable app, one login.
+- **Address:** `app.kneapps.fyi`. **Name:** "ניר אליהו".
+- **Open to view, login to act.** Rain and media stay public (shareable by link). Booking a court, and any future
+  members-only section, need a member login.
+- **Login with Google only** (an email link can be added later for people without Google).
+- **Self-registration with admin approval:** a new user signs in with Google and waits; an admin approves in the app.
+- **Permissions per section:** e.g. Dor = admin of everything, someone else = admin of sport only.
+- **Data stays where it is:** `rain_`, `kmedia_`, `sport_` tables keep their names and rows. Shared tables of the big
+  app use the prefix **`kne_`**.
+- **Move one section at a time**, old sites keep running until their section is ready, then the old address redirects
+  to the new path (old links keep working).
+- **Sport gets a security fix when it moves:** today anyone can change or delete any booking, even straight through the
+  database (`sport_*` policies allow public read/write). In the new app a booking belongs to the logged-in member who made
+  it; only they or a sport admin can change it.
+
+## 3. Architecture
+
+```
+src/
+  app/
+    layout.tsx              root: html, font (Rubik), install banner, Vercel Analytics
+    (site)/page.tsx         home: a tile per section
+    (site)/<slug>/…         each section's pages (from step 5 on)
+    manifest.ts robots.ts   installable app, hidden from search engines
+  core/                     shared by all sections, written once
+    modules.ts              THE SECTION LIST: name, short name, path, icon, accent colour, on/off
+    ui/Frame.tsx            header + desktop menu + phone tab bar + home tiles
+    ui/Icon.tsx             section icons
+    ui/InstallPrompt.tsx    "install as an app" banner (Android button / iPhone instructions)
+    (step 3) supabase/, auth.ts, permissions
+  modules/<slug>/           a section's own code (data loading, components), so sections don't touch each other
+```
+
+**Adding a section:** a folder `src/app/(site)/<slug>`, its code in `src/modules/<slug>`, one entry in
+`src/core/modules.ts`, and tables with a new prefix (plus explicit grants, see section 7). The home tile, the menus
+and the phone tab bar update themselves. While a section still lives in its old site, its entry's `href` is the old
+full URL (the tile just links there).
+
+**Look:** warm paper background, dark green-grey text, field-green brand (`--color-brand` #2f5f3a); each section has its
+own accent colour in `modules.ts` (rain blue, media clay, sport amber). Tokens in `src/app/globals.css`. Base text 18px.
+App icon: a sun over fields on green (`public/icons/`, drawn from the same shapes as the header logo).
+
+**Speed (lesson from kmedia):** functions run in Frankfurt next to Supabase (`vercel.json` → `regions: ["fra1"]`);
+public pages should stay cacheable, so "who is signed in" is checked in the browser for the frame, and on the server only
+where it matters (admin pages, actions).
+
+## 4. Accounts and where things live
+
+| Service | What | Notes |
+|---|---|---|
+| GitHub | `kovals320/kne` | Vercel deploys every push to `main` |
+| Vercel | team "Apps" (`apps-2265`), project `kne` (step 4) | Claude's Vercel connector gets 403 on this team: import, env vars and domain are done by Dor in the browser. Do NOT add the Supabase integration offered on import |
+| Cloudflare | zone `kneapps.fyi` | `app` CNAME to Vercel (DNS only, grey cloud) (step 4) |
+| Supabase | shared project `home` (`pjujibzoscawmstarerz`, eu-central-1) | Shared with all of Dor's apps; this app's own tables use `kne_` |
+| Google Cloud | OAuth client for "Sign in with Google" (step 3) | Set up by Dor in the browser; the secret goes only into Supabase |
+
+## 5. The plan, step by step
+
+1. ✅ Repo `kovals320/kne` created empty; this file written.
+2. ✅ The frame: home with tiles, desktop menu, phone tab bar, design, installable app (manifest, icons, banner).
+   Sections link to their old sites for now.
+3. Login and permissions: tables `kne_profiles` (each signed-in user: name, email, status pending/approved/blocked) and
+   `kne_roles` (who is admin of which section, plus a global admin), Google login in Supabase, an approval screen for
+   admins, sign-in / sign-out in the frame.
+4. Vercel project + `app.kneapps.fyi` (Cloudflare CNAME), env vars, Supabase redirect URL.
+5. Move rain in as `/rain` (same tables), switch its tile to the internal path, then redirect `rain.kneapps.fyi`.
+   Rain's admin rights move from `rain_members` to `kne_roles`.
+6. Move media in as `/media` (Immich + YouTube keys move to this Vercel project), then redirect `media.kneapps.fyi`.
+7. Rebuild sport as `/sport`: bookings tied to the logged-in member, new safe policies, then redirect
+   `sport.kneapps.fyi`. Existing bookings are kept.
+
+## 6. Status
+
+**2026-10-31:** steps 1–2 done (frame only; no database, no login yet).
+
+## 7. Gotchas (shared with the other apps)
+
+- Supabase `home` prefixes in use: `home_`, `sport_`, `sec_`, `shirim3_`, `media_`, `kmedia_`, `rain_`, `kne_`.
+- **From 2026-10-30 Supabase no longer grants Data API access to new `public` tables automatically.** Every new table
+  needs explicit grants in the same migration, or the app gets "permission denied":
+  `grant select on public.X to anon; grant select, insert, update, delete on public.X to authenticated, service_role;`
+  RLS still decides who can see/do what.
+- Never change the Supabase Site URL (shared project); each app adds its own Redirect URL.
+- Claude cannot create GitHub repos; Dor creates them empty, Claude attaches with push access.
+- Vercel connector: 403 on team Apps. Claude gives exact names/values; Dor does it in the browser.
+- The sites block crawlers, so Claude can't fetch them; Dor opens a page and reports.
+- Destructive SQL through the Supabase connector is cancelled; Dor runs it in the dashboard SQL editor.
+- Google Fonts are blocked in Claude's sandbox: for a local `next build`, stub the Rubik font in `layout.tsx`
+  temporarily (never commit the stub). Playwright + Chromium work for screenshots (`/opt/pw-browsers`).
+- Next.js 16: the `middleware` file is now `proxy.ts` (see `node_modules/next/dist/docs/…/proxy.md`).
+- Hebrew text with number ranges can display reversed: wrap ranges like `1968–2021` in `dir="ltr"`.
+- Keys and passwords never go in the chat.
+
+## 8. Working preferences of the owner (Dor)
+
+- Writes in Hebrew; **replies in English**.
+- Setup work: one step at a time, explained, wait for confirmation.
+- App features: build the whole thing and report when done.
+- Every table gets its section's prefix.
