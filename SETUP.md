@@ -97,7 +97,7 @@ for `*`), `kne_is_super()`. A blocked person loses admin rights automatically. A
 5. ✅ Move rain in as `/rain` (same tables), switch its tile to the internal path, then redirect `rain.kneapps.fyi`.
    Rain's admin rights move from `rain_members` to `kne_roles`.
 6. Move media in as `/media` (Immich + YouTube keys move to this Vercel project), then redirect `media.kneapps.fyi`.
-7. ✅ (switch-over pending) Rebuild sport as `/sport`: bookings tied to the logged-in member, new safe policies, then redirect
+7. ✅ Rebuild sport as `/sport`: bookings tied to the logged-in member, new safe policies, then redirect
    `sport.kneapps.fyi`. Existing bookings are kept.
 
 ## 6. Status
@@ -119,8 +119,8 @@ booking form, actions.ts; `src/modules/sport/types.ts`). Same tables `sport_cour
 new columns `booker_id` / `user_id`. Anyone views; approved members book in their own name (name from their profile) and
 join / leave games; the booker or a sport admin edits, deletes and removes participants. Old bookings (no `booker_id`)
 can be changed only by sport admins. Database triggers block overlapping bookings and over-full games.
-Switch-over still to do after Dor checks: drop the two old public policies (SQL in `supabase/migrations/sport_kne.sql`),
-point the tile to `/sport`, forward `sport.kneapps.fyi`. Then step 6 (media).
+Switched over after Dor's check: old public read/write policies dropped (migration `sport_close_public_write`), tile
+points to `/sport`, `sport.kneapps.fyi` forwards here (`vercel.json` in the sport repo). Next: step 6 (media).
 
 ## 7. Gotchas (shared with the other apps)
 
@@ -131,9 +131,11 @@ point the tile to `/sport`, forward `sport.kneapps.fyi`. Then step 6 (media).
   RLS still decides who can see/do what.
 - Never change the Supabase Site URL (shared project); each app adds its own Redirect URL.
 - Claude cannot create GitHub repos; Dor creates them empty, Claude attaches with push access.
-- Vercel connector: 403 on team Apps. Claude gives exact names/values; Dor does it in the browser.
+- Vercel connector: used to get 403 on team Apps; since 2026-10-31 it can read the team (deployments, projects). Use it to
+  check deploys (`list_deployments`, slug `apps-2265`). Env vars / domains still via Dor unless the connector allows it.
 - The sites block crawlers, so Claude can't fetch them; Dor opens a page and reports.
-- Destructive SQL through the Supabase connector is cancelled; Dor runs it in the dashboard SQL editor.
+- Destructive SQL through the Supabase connector: dropping tables was cancelled; dropping policies worked (2026-10-31).
+  If a statement is cancelled, Dor runs it in the dashboard SQL editor.
 - Google Fonts are blocked in Claude's sandbox: for a local `next build`, stub the Rubik font in `layout.tsx`
   temporarily (never commit the stub). Playwright + Chromium work for screenshots (`/opt/pw-browsers`).
 - Next.js 16: the `middleware` file is now `proxy.ts` (see `node_modules/next/dist/docs/…/proxy.md`).

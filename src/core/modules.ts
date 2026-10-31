@@ -46,7 +46,7 @@ export const MODULES: Module[] = [
     name: "מגרשי ספורט",
     shortName: "ספורט",
     description: "הזמנת מגרשים והצטרפות למשחקים",
-    href: "https://sport.kneapps.fyi",
+    href: "/sport",
     icon: "sport",
     accent: "#a34a0a",
     tint: "#fbefdc",

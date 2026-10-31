@@ -33,3 +33,7 @@ create policy "sport participants: self, booker or sport admin removes" on publi
 -- Triggers: sport_no_overlap (no overlapping bookings on the same court, error 'sport_overlap') and
 -- sport_capacity (joining only when registration is on and not full: 'sport_no_registration' / 'sport_full').
 -- Full function bodies: see the migration in Supabase (list_migrations → sport_kne).
+
+-- Applied 2026-10-31 as migration sport_close_public_write (the switch-over):
+drop policy "Allow public read/write on sport_court_bookings" on public.sport_court_bookings;
+drop policy "Allow public read/write on sport_booking_participants" on public.sport_booking_participants;
