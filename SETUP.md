@@ -94,7 +94,7 @@ for `*`), `kne_is_super()`. A blocked person loses admin rights automatically. A
    `kne_roles` (who is admin of which section, plus a global admin), Google login in Supabase, an approval screen for
    admins, sign-in / sign-out in the frame.
 4. ✅ Vercel project + `app.kneapps.fyi` (Cloudflare CNAME), env vars, Supabase redirect URL.
-5. ✅ (redirect pending Dor's check) Move rain in as `/rain` (same tables), switch its tile to the internal path, then redirect `rain.kneapps.fyi`.
+5. ✅ Move rain in as `/rain` (same tables), switch its tile to the internal path, then redirect `rain.kneapps.fyi`.
    Rain's admin rights move from `rain_members` to `kne_roles`.
 6. Move media in as `/media` (Immich + YouTube keys move to this Vercel project), then redirect `media.kneapps.fyi`.
 7. Rebuild sport as `/sport`: bookings tied to the logged-in member, new safe policies, then redirect
@@ -113,7 +113,7 @@ Rain moved in (2026-10-31): `src/modules/rain/` (data.ts = reads `rain_daily`, c
 Hero.tsx; ui.tsx = the section's title and tabs inside the frame) and pages under `src/app/(site)/rain/`
 (home, about, daily, monthly, admin). Rain admins = `kne_is_admin('rain')` (migration `rain_kne_admins` added a policy
 next to the old `rain_members` one, so the old site still works). Local test data: `RAIN_FIXTURE=…json`.
-Next: Dor checks `/rain`, then `rain.kneapps.fyi` redirects to `app.kneapps.fyi/rain` (redirects in the rain repo).
+Dor checked it; `rain.kneapps.fyi` now forwards to `app.kneapps.fyi/rain` (`next.config.ts` redirects in the rain repo, which only does that now). Next: step 7 (sport) before 6 (media).
 
 ## 7. Gotchas (shared with the other apps)
 
