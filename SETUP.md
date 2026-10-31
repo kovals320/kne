@@ -107,8 +107,8 @@ URL `https://app.kneapps.fyi/**`. Login: Google Cloud project `nir-eliyahu-app` 
 external), OAuth web client with origin `https://app.kneapps.fyi` and redirect URI
 `https://pjujibzoscawmstarerz.supabase.co/auth/v1/callback`; Supabase Google provider enabled, sign-ups allowed.
 Code: `/login` (Google), `/auth/callback` (creates the `kne_profiles` row as pending on the first visit), `/pending`,
-`/admin/users` (app admins: approve / reject / block, admin rights per section). Next: Dor signs in, Claude makes him
-approved + `*` admin via SQL; then step 5 (rain).
+`/admin/users` (app admins: approve / reject / block, admin rights per section). Dor signed in as dorhorwitz@gmail.com and was made
+approved + `*` admin via SQL. Next: step 5 (rain).
 
 ## 7. Gotchas (shared with the other apps)
 

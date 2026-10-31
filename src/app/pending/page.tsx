@@ -16,12 +16,10 @@ export default async function PendingPage() {
       <section className="mx-auto max-w-md rounded-3xl border border-line bg-card p-6 shadow-sm">
         <h1 className="text-2xl font-bold">{blocked ? "אין גישה" : "הבקשה התקבלה"}</h1>
         <p className="mt-2 text-lg">
-          {viewer.profile ? `שלום ${displayName(viewer.profile)}. ` : ""}
           {blocked
-            ? "החשבון הזה לא אושר לשימוש באפליקציה. אם זו טעות, פנו למנהלי האפליקציה."
-            : "הבקשה שלכם להצטרף ממתינה לאישור מנהל. אחרי האישור, היכנסו שוב והכול יהיה פתוח."}
+            ? `${viewer.profile ? `שלום ${displayName(viewer.profile)}, ` : ""}החשבון הזה לא אושר לשימוש באפליקציה. אם זו טעות, פנו למנהלי האפליקציה.`
+            : `שלום ${viewer.profile ? displayName(viewer.profile) : ""}, בקשתך להצטרף ממתינה לאישור מנהל. בינתיים אפשר להמשיך לגלוש בחלקים הפתוחים של האפליקציה.`}
         </p>
-        <p className="mt-3 text-muted">בינתיים אפשר להמשיך לגלוש בחלקים הפתוחים של האפליקציה.</p>
         <div className="mt-6 flex gap-3">
           <a href="/" className="rounded-2xl bg-brand px-5 py-3 font-semibold text-white">
             לעמוד הראשי
