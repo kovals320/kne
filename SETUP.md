@@ -26,8 +26,10 @@ One app for Kibbutz Nir Eliyahu (Hebrew, right-to-left, mobile-first, installabl
 - **Login with Google only** (an email link can be added later for people without Google).
 - **Self-registration with admin approval:** a new user signs in with Google and waits; an admin approves in the app.
 - **Permissions per section:** e.g. Dor = admin of everything, someone else = admin of sport only.
-- **Data stays where it is:** `rain_`, `kmedia_`, `sport_` tables keep their names and rows. Shared tables of the big
-  app use the prefix **`kne_`**.
+- **Table prefix `kne_` for everything new in this app** (Dor's rule, as in every app): shared tables
+  (`kne_profiles`, `kne_roles` …) and future sections too, as `kne_<section>_…` (e.g. `kne_events_…`).
+  The existing `rain_`, `kmedia_`, `sport_` tables keep their names and rows (the old sites use them until each
+  section moves in).
 - **Move one section at a time**, old sites keep running until their section is ready, then the old address redirects
   to the new path (old links keep working).
 - **Sport gets a security fix when it moves:** today anyone can change or delete any booking, even straight through the
@@ -92,7 +94,8 @@ where it matters (admin pages, actions).
 
 ## 6. Status
 
-**2026-10-31:** steps 1–2 done (frame only; no database, no login yet).
+**2026-10-31:** steps 1–2 done (frame only; no database, no login yet). Vercel project `kne` imported by Dor with the
+2 Supabase env vars; next: domain `app.kneapps.fyi`, then login (step 3).
 
 ## 7. Gotchas (shared with the other apps)
 
