@@ -104,8 +104,7 @@ for `*`), `kne_is_super()`. A blocked person loses admin rights automatically. A
 4. ✅ Vercel project + `app.kneapps.fyi` (Cloudflare CNAME), env vars, Supabase redirect URL.
 5. ✅ Move rain in as `/rain` (same tables), switch its tile to the internal path, then redirect `rain.kneapps.fyi`.
    Rain's admin rights move from `rain_members` to `kne_roles`.
-6. ⏳ Move media in as `/media` (Immich + YouTube keys move to this Vercel project), then redirect `media.kneapps.fyi`.
-   Code is in (2026-10-31); waiting for the three env vars, Dor's check, then the switch-over.
+6. ✅ Move media in as `/media` (Immich + YouTube keys move to this Vercel project), then redirect `media.kneapps.fyi`.
 7. ✅ Rebuild sport as `/sport`: bookings tied to the logged-in member, new safe policies, then redirect
    `sport.kneapps.fyi`. Existing bookings are kept.
 
@@ -138,11 +137,13 @@ Same tables `kmedia_playlists` / `kmedia_video_titles` / `kmedia_settings` and c
 `kmedia-settings`, `kmedia-videos-db`). Media admins = `kne_is_admin('media')` (migration `kmedia_kne_admins`, next to
 the old `kmedia_is_admin()` policies; `kmedia_members` is no longer used by this app). Colours `sun`/`lake`/`print` and
 `font-display` (= Rubik bold) added to `globals.css`. Home card: a year's cover photo (changes daily) + photo count.
-**Needs on Vercel → kne → Settings → Environment Variables:** `YOUTUBE_API_KEY`, `IMMICH_URL`
-(`https://photos.kneapps.fyi`), `IMMICH_API_KEY` (same values as the kmedia project; keys as "Sensitive"), then a
-redeploy (photos pages are pre-built at deploy time, so the build must see the keys). Check: `/api/media/health`,
-`/media`. **Switch-over after Dor's check:** `href: "/media"` in `modules.ts`; `media.kneapps.fyi` forwards via
-redirects in the kmedia repo (needs push access to `kovals320/kmedia`), like rain.
+Env vars on Vercel `kne`: `IMMICH_URL` (Config, `https://photos.kneapps.fyi`), `YOUTUBE_API_KEY` (Secret, the
+Google Cloud project `media-dorh` key shared by both media sites), `IMMICH_API_KEY` (Secret, its own read-only Immich key
+"app.kneapps.fyi": asset.read, asset.view, library.read, timeline.read, person.read). Photos pages are pre-built at deploy,
+so after changing these keys redeploy. Dor checked `/api/media/health` and `/media`; switched over: tile points to
+`/media`, `media.kneapps.fyi` forwards here (`next.config.ts` redirects in the kmedia repo, incl. `/photos/…`,
+`/videos?v=`, `/api/photo/…`). **All three old apps are now inside this app.** The old kmedia Immich key `kmedia-app`
+and the `kmedia_members` table / `kmedia_is_admin()` policies are no longer used and can be removed later.
 
 ## 7. Gotchas (shared with the other apps)
 

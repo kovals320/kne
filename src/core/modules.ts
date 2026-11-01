@@ -35,7 +35,7 @@ export const MODULES: Module[] = [
     name: "מדיה",
     shortName: "מדיה",
     description: "תמונות וסרטים מההיסטוריה של הקיבוץ",
-    href: "https://media.kneapps.fyi",
+    href: "/media",
     icon: "media",
     accent: "#a4532a",
     tint: "#f8ebe2",
