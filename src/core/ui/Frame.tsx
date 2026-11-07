@@ -21,6 +21,8 @@ function ModuleLink({ m, className, children }: { m: Module; className: string; 
 // Header on every page, a bottom tab bar on phones, and the page content between them.
 export function Frame({ active, children }: { active?: string; children: React.ReactNode }) {
   const modules = enabledModules();
+  // With only one section open, the app opens straight into it (src/proxy.ts) and needs no menus.
+  const single = modules.length === 1;
   return (
     <div className="flex min-h-dvh flex-col">
       <header className="sticky top-0 z-30 border-b border-line bg-paper/90 backdrop-blur">
@@ -36,6 +38,7 @@ export function Frame({ active, children }: { active?: string; children: React.R
           </Link>
           <div className="flex items-center gap-2">
           {/* Desktop menu */}
+          {!single && (
           <nav aria-label="תפריט" className="hidden items-center gap-1 sm:flex">
             {modules.map((m) => (
               <ModuleLink
@@ -52,14 +55,16 @@ export function Frame({ active, children }: { active?: string; children: React.R
               </ModuleLink>
             ))}
           </nav>
+          )}
           <UserMenu />
           </div>
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-5xl flex-1 px-4 pb-28 pt-6 sm:pb-10">{children}</main>
+      <main className={`mx-auto w-full max-w-5xl flex-1 px-4 pt-6 sm:pb-10 ${single ? "pb-10" : "pb-28"}`}>{children}</main>
 
       {/* Phone tab bar */}
+      {!single && (
       <nav
         aria-label="תפריט"
         className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-paper/95 pb-[env(safe-area-inset-bottom)] backdrop-blur sm:hidden"
@@ -90,6 +95,7 @@ export function Frame({ active, children }: { active?: string; children: React.R
           ))}
         </ul>
       </nav>
+      )}
     </div>
   );
 }

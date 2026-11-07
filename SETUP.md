@@ -149,6 +149,8 @@ and the `kmedia_members` table / `kmedia_is_admin()` policies are no longer used
 `src/core/modules.ts`): no tab, no home card, and `src/proxy.ts` sends `/media…` and `/sport…` to the home page and
 answers 404 for `/api/media/…`. Code, tables, env vars and data are untouched; to bring a section back set
 `enabled: true` and push. (`media.` / `sport.kneapps.fyi` still forward here, so for now they land on the home page.)
+While only one section is open, `/` opens it directly (`src/proxy.ts`) and the frame drops the desktop menu and the
+phone tab bar (`Frame.tsx`, `single`); both come back by themselves when a second section is switched on.
 
 ## 7. Gotchas (shared with the other apps)
 
