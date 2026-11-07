@@ -145,6 +145,11 @@ so after changing these keys redeploy. Dor checked `/api/media/health` and `/med
 `/videos?v=`, `/api/photo/…`). **All three old apps are now inside this app.** The old kmedia Immich key `kmedia-app`
 and the `kmedia_members` table / `kmedia_is_admin()` policies are no longer used and can be removed later.
 
+**2026-11-07 (Dor):** for now only rain is open. Media and sport are switched off (`enabled: false` in
+`src/core/modules.ts`): no tab, no home card, and `src/proxy.ts` sends `/media…` and `/sport…` to the home page and
+answers 404 for `/api/media/…`. Code, tables, env vars and data are untouched; to bring a section back set
+`enabled: true` and push. (`media.` / `sport.kneapps.fyi` still forward here, so for now they land on the home page.)
+
 ## 7. Gotchas (shared with the other apps)
 
 - Supabase `home` prefixes in use: `home_`, `sport_`, `sec_`, `shirim3_`, `media_`, `kmedia_`, `rain_`, `rnb_`, `kne_`.

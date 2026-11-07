@@ -39,7 +39,7 @@ export const MODULES: Module[] = [
     icon: "media",
     accent: "#a4532a",
     tint: "#f8ebe2",
-    enabled: true,
+    enabled: false, // hidden for now (Dor, 2026-11-07); set true to bring it back
   },
   {
     slug: "sport",
@@ -50,9 +50,12 @@ export const MODULES: Module[] = [
     icon: "sport",
     accent: "#a34a0a",
     tint: "#fbefdc",
-    enabled: true,
+    enabled: false, // hidden for now (Dor, 2026-11-07); set true to bring it back
   },
 ];
 
 export const enabledModules = () => MODULES.filter((m) => m.enabled);
+// A switched-off section is hidden from the menus and the home page, and its pages and APIs are
+// closed (src/proxy.ts sends them home); its code and tables stay, ready to switch back on.
+export const isEnabled = (slug: string) => MODULES.some((m) => m.slug === slug && m.enabled);
 export const isExternal = (m: Module) => /^https?:\/\//.test(m.href);
