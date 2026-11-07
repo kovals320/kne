@@ -50,7 +50,7 @@ export default async function Home() {
   const avgToDate = averageCumulative(days, sum.complete.map((s) => s.season))[seasonDayOffset(today)] ?? 0;
   const curTotal = cumulative(days, sum.current)[seasonDayOffset(today)] ?? 0;
   const lastToDate = cumulative(days, last.season)[seasonDayOffset(today)] ?? 0;
-  const recent = days.filter((d) => d.mm > 0).slice(-6).reverse();
+  const recent = days.filter((d) => d.mm > 0).slice(-5).reverse();
 
   return (
     <Page active={"/rain"}>
